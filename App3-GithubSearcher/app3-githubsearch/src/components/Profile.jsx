@@ -1,34 +1,40 @@
 import Repos from "./Repos";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Profile = ({ username, link, profilePicture }) => {
     const [repos, setRepos] = useState([]);
     const [isShowOpen, setIsShowOpen] = useState(false);
 
-    function handleShowRepos(username) {
-        fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=7`)
-        .then(response => {
+    async function handleShowRepos() {
+        const url = `https://api.github.com/users/${username}/repos`;
+        try {
+            const response = await fetch(url); 
             if (!response.ok) {
-            throw new Error(`GitHub API error: ${response.status}`);
+                throw new Error(`GitHub API error: ${response.status}`);
             }
-            return response.json();
-        })
-        .then(data => {
+            const data = await response.json();
             setRepos(data);
             console.log(`Fetched repos for ${username}:`, data);
-        })
-        .catch(err => {
+        } catch (err) {
             alert("An error occurred while fetching repositories from GitHub API.");
             console.error(err);
-        });
-
-        setIsShowOpen(true);
+        }
     }
 
-    function handleHideRepos() {
-        setRepos([]);
-        setIsShowOpen(false);
+    function handleIsOpen() {
+        if (isShowOpen) {
+            setRepos([]);
+            setIsShowOpen(false);
+        } else {
+            setIsShowOpen(true);
+        }
     }
+
+    useEffect(() => {
+        if(isShowOpen) {
+            handleShowRepos();
+        }
+    }, [isShowOpen]);
 
     return ( <>
         <div className="p-4 border rounded shadow-md flex align-middle items-center my-4 w-150 mx-auto">
@@ -41,16 +47,9 @@ const Profile = ({ username, link, profilePicture }) => {
             <button className="mx-3 bg-blue-500 text-white p-2 rounded mt-1 hover:bg-blue-600 active:bg-blue-700 w-30">
                 <a href={link} className="text-white mt-1 block">View Profile</a>
             </button>
-            {isShowOpen && (
-                <button onClick={() => handleHideRepos(username)} className="mx-3 bg-green-500 text-white p-2 rounded mt-1 hover:bg-green-600 active:bg-green-700 w-30">
-                    Hide Repos
+                <button onClick={() => handleIsOpen(username)} className="mx-3 bg-green-500 text-white p-2 rounded mt-1 hover:bg-green-600 active:bg-green-700 w-30">
+                    {isShowOpen ? "Hide Repos" : "Show Repos"}
                 </button>
-            )}
-            {!isShowOpen && (
-                <button onClick={() => handleShowRepos(username)} className="mx-3 bg-green-500 text-white p-2 rounded mt-1 hover:bg-green-600 active:bg-green-700 w-30">
-                    Show Repos
-                </button>
-            )}
         </div>
             {repos.length > 0 && <Repos repos={repos} />}
 
