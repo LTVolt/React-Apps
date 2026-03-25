@@ -1,4 +1,5 @@
 There will be 8 Apps here, in increasing order of difficulty and complexity, in order to learn React in its fullest, as a stepping stone to learn Next.js.\
+No AI will be used for these apps, expect simple designs.
 
 App 1 - Counter App\
 App 2 - Task Manager\
