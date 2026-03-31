@@ -1,21 +1,18 @@
+import { useParams } from 'react-router-dom';
+import * as data from '../data/data.js'
 
 
-const Post = ({postID, postTitle, postAttractText}) => {
+const Post = () => {
+    const postParams = useParams();
 
-    function handleClick() {
-        alert(`You clicked on post #${postID}`);
-        // Post Page navigation
-
-
-    }
+    const currentPost = data.posts.find(post => {
+            return postParams.postID === post.id
+    });
 
     return ( 
     <>
-        <section onClick={handleClick} className="mt-5 border-2 border-gray-300 rounded-lg p-5 mx-auto w-4/5 hover:bg-gray-100 cursor-pointer active:bg-gray-200">
-        <h2 className="font-bold text-2xl mt-1 text-center">Post #{postID}</h2>
-        <h3 className="text-center text-gray-500">{postTitle}</h3>
-        <p className="mt-2 w-4/5 mx-auto text-center">{postAttractText}</p>
-      </section>
+        <p className='text-center'>{currentPost ? currentPost.title : "Post not found"}</p>
+        <p className='text-center mt-4'>{currentPost ? currentPost.content : "Content not found"}</p>
     </> );
 }
  
